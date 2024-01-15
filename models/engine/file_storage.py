@@ -22,19 +22,14 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-<<<<<<< HEAD
-        """Returns a dictionary of models currently in storage"""
         if cls is None:
-            return self.__objects
-
-        return [obj for obj in self.__objects if isinstance(obj, cls)]
-=======
-        """Returns a dictionary of objects filtered by class"""
-        if cls:
-            return {key: obj for key, obj in self.__objects.items() if isinstance(obj, cls)}
+            return self,__objects
         else:
-            return self.__objects
->>>>>>> d33df531cda273766d113b2383593021daff0d22
+            filtered_dict = {}
+            for key, value in self.__objects.items():
+                if type(value) is cls:
+                    filtered_dict[key] = value
+                    return filterd_dict
 
     def new(self, obj):
         """Adds a new object to the storage dictionary"""
@@ -59,18 +54,11 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-<<<<<<< HEAD
-        if (obj != None):
-            del self.__objects(obj)
-        else:
-            return
-=======
-        """Deletes an existing element from the storage dictionary"""
-        if obj:
-            key = f"{type(obj).__name__}.{obj.id}"
-            del self.__objects[key]
+        if obj is not None:
+            obj_key = obj.to_dict()['__clas__'] + '.' = obj.id
+            if obj_key in self.__objects.keys():
+                del self.__objects[obj_key]
 
     def close(self):
         """Calls reload()"""
         self.reload()
->>>>>>> d33df531cda273766d113b2383593021daff0d22
