@@ -22,46 +22,59 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """Returns a dictionary of objects filtered by class"""
+        """returns a dictionary
+        Return:
+            returns a dictionary of __object
+        """
         dic = {}
         if cls:
-            for key, value in self.__objects.items():
-                obj_cls = key.split('.')[0]
-                if obj_cls == cls.__name__:
-                    dic[key] = value
-            return dic
+            dictionary = self.__objects
+            for key in dictionary:
+                partition = key.replace('.', ' ')
+                partition = shlex.split(partition)
+                if (partition[0] == cls.__name__):
+                    dic[key] = self.__objects[key]
+            return (dic)
         else:
             return self.__objects
 
     def new(self, obj):
-        """Adds a new object to the storage dictionary"""
+        """sets __object to given obj
+        Args:
+            obj: given object
+        """
         if obj:
-            key = f"{type(obj).__name__}.{obj.id}"
+            key = "{}.{}".format(type(obj).__name__, obj.id)
             self.__objects[key] = obj
 
     def save(self):
-        """Serializes the storage dictionary to the JSON file"""
-        my_dict = {key: value.to_dict() for key, value in self.__objects.items()}
+        """serialize the file path to JSON file path
+        """
+        my_dict = {}
+        for key, value in self.__objects.items():
+            my_dict[key] = value.to_dict()
         with open(self.__file_path, 'w', encoding="UTF-8") as f:
             json.dump(my_dict, f)
 
     def reload(self):
-        """Deserializes the JSON file to the storage dictionary"""
+        """serialize the file path to JSON file path
+        """
         try:
             with open(self.__file_path, 'r', encoding="UTF-8") as f:
-                for key, value in json.load(f).items():
-                    obj = eval(value["__class__"])(**value)
-                    self.__objects[key] = obj
+                for key, value in (json.load(f)).items():
+                    value = eval(value["__class__"])(**value)
+                    self.__objects[key] = value
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
-        """Delete an existing object from the storage dictionary"""
+        """ delete an existing element
+        """
         if obj:
-            key = f"{type(obj).__name__}.{obj.id}"
-            if key in self.__objects:
-                del self.__objects[key]
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            del self.__objects[key]
 
     def close(self):
-        """Calls reload()"""
+        """ calls reload()
+        """
         self.reload()
