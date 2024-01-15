@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """This is the file storage class for AirBnB"""
 import json
-import shlex
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -9,6 +8,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+import shlex
 
 
 class FileStorage:
@@ -22,14 +22,16 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        if cls is None:
-            return self,__objects
-        else:
-            filtered_dict = {}
+        """Returns a dictionary of objects filtered by class"""
+        dic = {}
+        if cls:
             for key, value in self.__objects.items():
-                if type(value) is cls:
-                    filtered_dict[key] = value
-                    return filterd_dict
+                obj_cls = key.split('.')[0]
+                if obj_cls == cls.__name__:
+                    dic[key] = value
+            return dic
+        else:
+            return self.__objects
 
     def new(self, obj):
         """Adds a new object to the storage dictionary"""
@@ -54,10 +56,11 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        if obj is not None:
-            obj_key = obj.to_dict()['__clas__'] + '.' = obj.id
-            if obj_key in self.__objects.keys():
-                del self.__objects[obj_key]
+        """Delete an existing object from the storage dictionary"""
+        if obj:
+            key = f"{type(obj).__name__}.{obj.id}"
+            if key in self.__objects:
+                del self.__objects[key]
 
     def close(self):
         """Calls reload()"""
