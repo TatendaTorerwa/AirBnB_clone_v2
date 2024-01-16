@@ -17,12 +17,11 @@ from models.user import User
 from tests import clear_stream
 
 
-
 class TestHBNBCommand(unittest.TesCAse):
     """Represents the test class for the HBNBCommand class
     """
     @unittest.skipif(
-            os.getenv('HBNB_TYPE_STORAGE') = 'db', 'FileStorage test')
+            os.getenv('HBNB_TYPE_STORAGE')='db', 'FileStorage test')
     def test_fs_create(self):
         """Test the create command with the file storage.
         """
