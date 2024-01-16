@@ -1,4 +1,5 @@
-onsole Module """
+#!/usr/bin/python3
+"""console Module """
 import cmd
 import sys
 from models.base_model import BaseModel
@@ -113,34 +114,35 @@ class HBNBCommand(cmd.Cmd):
         pass
 
         def do_create(self, args):
-        """ Create an object of any class"""
-        try:
-            if not args:
-                raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
-            print("** class name missing **")
-            return
-        except NameError:
-            print("** class doesn't exist **")
-            return
+        	""" Create an object of any class"""
+        	try:
+            		if not args:
+                		raise SyntaxError()
+            		arg_list = args.split(" ")
+            		kw = {}
+            		for arg in arg_list[1:]:
+                		arg_splited = arg.split("=")
+                		arg_splited[1] = eval(arg_splited[1])
+				print (type(arg_splitted[1]))
+                		if type(arg_splited[1]) is str:
+                    			arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
+                			kw[arg_splited[0]] = arg_splited[1]
+        	except SyntaxError:
+            		print("** class name missing **")
+            		return
+        	except NameError:
+            		print("** class doesn't exist **")
+            		return
     
-        class_name = arg_list[0]
+        	class_name = arg_list[0]
     
-        if class_name not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
+        	if class_name not in HBNBCommand.classes:
+            		print("** class doesn't exist **")
+            		return
     
-        new_instance = HBNBCommand.classes[class_name](**kw)
-        new_instance.save()
-        print(new_instance.id)
+        	new_instance = HBNBCommand.classes[class_name](**kw)
+        	new_instance.save()
+        	print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
