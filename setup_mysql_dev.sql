@@ -14,7 +14,3 @@ GRANT SELECT ON `perfomance_schema`.* TO 'hbnb_dev'@'localhost';
 
 -- Flush privileges to apply the changes
 FLUSH PRIVILEGES;
-
--- Display a message confirming the completion of the operations
-SELECT 'MySQL server prepared for the project.';
-
