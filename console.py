@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-""" Console Module """
+onsole Module """
 import cmd
 import sys
 import re
@@ -117,8 +116,9 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+        def do_create(self, args):
         """ Create an object of any class"""
+<<<<<<< HEAD
         ignored_attrs = ('id', 'created_at', 'updated_at', '__class__')
         class_name = ''
         name_pattern = r'(?P<name>(?:[a-zA-Z]|_)(?:[a-zA-Z]|\d|_)*)'
@@ -176,6 +176,35 @@ class HBNBCommand(cmd.Cmd):
                         setattr(new_instance, key, value)
                 new_instance.save()
                 print(new_instance.id)
+=======
+        try:
+            if not args:
+                raise SyntaxError()
+            arg_list = args.split(" ")
+            kw = {}
+            for arg in arg_list[1:]:
+                arg_splited = arg.split("=")
+                arg_splited[1] = eval(arg_splited[1])
+                if type(arg_splited[1]) is str:
+                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
+                kw[arg_splited[0]] = arg_splited[1]
+        except SyntaxError:
+            print("** class name missing **")
+            return
+        except NameError:
+            print("** class doesn't exist **")
+            return
+    
+        class_name = arg_list[0]
+    
+        if class_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+    
+        new_instance = HBNBCommand.classes[class_name](**kw)
+        new_instance.save()
+        print(new_instance.id)
+>>>>>>> db8a2c088e76a3ecaa4e0d9d563240a677126c38
 
     def help_create(self):
         """ Help information for the create method """
