@@ -138,6 +138,13 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the create method """
         print("Creates a class of any type")
         print("[Usage]: create <className>\n")
+        print("Param syntax: <key name>=<value>")
+        print("Value syntax:")
+        print("  String: \"<value>\" => starts with a double quote")
+        print("  Float: <unit>.<decimal> => contains a dot .")
+        print("  Integer: <number> => default case")
+        print("  If any parameter doesn’t fit with these requirements, it will be skipped")
+        print("Example: create Place city_id=\"0001\" user_id=\"0001\" name=\"My_little_house\" number_rooms=4 number_bathrooms=2 max_guest=10 price_by_night=300 latitude=37.773972 longitude=-122.431297")
 
     def do_show(self, args):
         """ Method to show an individual object """
