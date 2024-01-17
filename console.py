@@ -118,7 +118,6 @@ class HBNBCommand(cmd.Cmd):
         pass
 
         def do_create(self, args):
-<<<<<<< HEAD
         	""" Create an object of any class"""
         	try:
             		if not args:
@@ -138,9 +137,7 @@ class HBNBCommand(cmd.Cmd):
         	except NameError:
             		print("** class doesn't exist **")
             		return
-=======
         """ Create an object of any class"""
-<<<<<<< HEAD
         ignored_attrs = ('id', 'created_at', 'updated_at', '__class__')
         class_name = ''
         name_pattern = r'(?P<name>(?:[a-zA-Z]|_)(?:[a-zA-Z]|\d|_)*)'
@@ -198,7 +195,6 @@ class HBNBCommand(cmd.Cmd):
                         setattr(new_instance, key, value)
                 new_instance.save()
                 print(new_instance.id)
-=======
         try:
             if not args:
                 raise SyntaxError()
@@ -216,7 +212,6 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
             return
->>>>>>> b82fa2bf1d2439d3fc14ca440d803c29fea9b8db
     
         	class_name = arg_list[0]
     
@@ -224,16 +219,12 @@ class HBNBCommand(cmd.Cmd):
             		print("** class doesn't exist **")
             		return
     
-<<<<<<< HEAD
         	new_instance = HBNBCommand.classes[class_name](**kw)
         	new_instance.save()
         	print(new_instance.id)
-=======
         new_instance = HBNBCommand.classes[class_name](**kw)
         new_instance.save()
         print(new_instance.id)
->>>>>>> db8a2c088e76a3ecaa4e0d9d563240a677126c38
->>>>>>> b82fa2bf1d2439d3fc14ca440d803c29fea9b8db
 
     def help_create(self):
         """ Help information for the create method """
