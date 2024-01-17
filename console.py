@@ -117,114 +117,53 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-        def do_create(self, args):
-        	""" Create an object of any class"""
-        	try:
-            		if not args:
-                		raise SyntaxError()
-            		arg_list = args.split(" ")
-            		kw = {}
-            		for arg in arg_list[1:]:
-                		arg_splited = arg.split("=")
-                		arg_splited[1] = eval(arg_splited[1])
-				print (type(arg_splitted[1]))
-                		if type(arg_splited[1]) is str:
-                    			arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-                			kw[arg_splited[0]] = arg_splited[1]
-        	except SyntaxError:
-            		print("** class name missing **")
-            		return
-        	except NameError:
-            		print("** class doesn't exist **")
-            		return
+	def do_create(self, arg):
         """ Create an object of any class"""
-        ignored_attrs = ('id', 'created_at', 'updated_at', '__class__')
-        class_name = ''
-        name_pattern = r'(?P<name>(?:[a-zA-Z]|_)(?:[a-zA-Z]|\d|_)*)'
-        class_match = re.match(name_pattern, args)
-        obj_kwargs = {}
-        if class_match is not None:
-            class_name = class_match.group('name')
-            params_str = args[len(c;lass_name):].strip()
-            params = params_str.split(' ')
-            str_pattern = r'(?P<t_str>"([^"]|\")*")'
-            float_pattern = r'(?P<t_float>[-+]?\d+\.\d+)'
-            int_pattern = r'(?P<t_int>[-+]?\d+)'
-            param_pattern = '{}=({}|{}|{})'.format(
-                    name_pattern,
-                    str_pattern,
-                    float_pattern,
-                    int_pattern
-            )
 
-            for param in params:
-                param_match = re.fullmatch(param_pattern, param)
-                if param_match is not None:
-                    key_name = param_match.group('name')
-                    str_v = param_match.group('t_str')
-                    float_v = param.match.group('t_float')
-                    int_v = param_match.group('t_int')
-                    if float_v is not None:
-                        obj_kwargs[key_name] = float(float_v)
-                    if int_v is not None:
-                        obj_kwargs[key_name] = int(int_v)
-                    if str_v is not None:
-                        obj_kwargs[key_name] = str_v[1:-1].replace('_', ' ')
-            else:
-                class_name = args
-            if not class_name:
-                print("** class name missing **")
-                return
-            elif class_name not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            if os.getenv('HBNB_TYPE_STORAGE') == 'DB':
-                if not hasattr(obj_kwargs, 'id'):
-                    obj_kwargs['id'] = str(uuid.uuid4())
-                if  not hasattr(obj_kwargs, 'created_at'):
-                    obj_kwargs['created_at'] = str(datetime.now())
-                if not hasattr(obj_kwargs, 'updated_at'):
-                    obj_kwargs['updated_at'] = str(datetime.now())
-                new_instance = HBNBCommand.classes[class_name](**obj_kwargs)
-                new_instance.save()
-                print(new_instance.id)
-            else:
-                new_instance = HBNBCommand.classes[class_name]()
-                for key, value in obj_kwargs.items():
-                    if key not in ignore_attrs:
-                        setattr(new_instance, key, value)
-                new_instance.save()
-                print(new_instance.id)
-        try:
-            if not args:
-                raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
+        args = arg.split()
+
+        if len(args) == 0:
             print("** class name missing **")
             return
-        except NameError:
+
+        new_args = []
+        for val in args:
+            idx = val.find('=')
+            val = val[:idx] + val[idx:].replace('_', ' ')
+            new_args.append(val)
+
+        if new_args[0] in HBNBCommand.classes:
+            new_instance = HBNBCommand.classes[new_args[0]]()
+            new_dict = {}
+            for val in new_args:
+                if val != new_args[0]:
+                    new_list = val.split('=')
+                    new_dict[new_list[0]] = new_list[1]
+
+            for key, value in new_dict.items():
+                if value[0] == '"':
+                    val_list = shlex.split(value)
+                    new_dict[key] = val_list[0]
+                    setattr(new_instance, key, new_dict[key])
+                else:
+                    try:
+                        if type(eval(value))._name_ == 'int':
+                            value = eval(value)
+                    except Exception:
+                        continue
+                    try:
+                        if type(eval(value))._name_ == 'float':
+                            value = eval(value)
+                    except Exception:
+                        continue
+
+                    setattr(new_instance, key, value)
+
+            new_instance.save()
+            print(new_instance.id)
+        else:
             print("** class doesn't exist **")
-            return
-    
-        	class_name = arg_list[0]
-    
-        	if class_name not in HBNBCommand.classes:
-            		print("** class doesn't exist **")
-            		return
-    
-        	new_instance = HBNBCommand.classes[class_name](**kw)
-        	new_instance.save()
-        	print(new_instance.id)
-        new_instance = HBNBCommand.classes[class_name](**kw)
-        new_instance.save()
-        print(new_instance.id)
+
 
     def help_create(self):
         """ Help information for the create method """
