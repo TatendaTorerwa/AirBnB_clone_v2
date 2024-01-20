@@ -9,7 +9,8 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 import shlex
-
+import os
+from importlib import import_module
 
 class FileStorage:
     """This class serializes instances to a JSON file and
@@ -21,60 +22,75 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
+    def __init__(self):
+        """Initializes a FileStorage instance"""
+        self.model_classes = {
+            'BaseModel': import_module('models.base_model').BaseModel,
+            'User': import_module('models.user').User,
+            'State': import_module('models.state').State,
+            'City': import_module('models.city').City,
+            'Amenity': import_module('models.amenity').Amenity,
+            'Place': import_module('models.place').Place,
+            'Review': import_module('models.review').Review
+        }
+
     def all(self, cls=None):
         """returns a dictionary
         Return:
             returns a dictionary of __object
         """
-        dic = {}
-        if cls:
-            dictionary = self.__objects
-            for key in dictionary:
-                partition = key.replace('.', ' ')
-                partition = shlex.split(partition)
-                if (partition[0] == cls.__name__):
-                    dic[key] = self.__objects[key]
-            return (dic)
-        else:
+        if cls is None:
             return self.__objects
+        else:
+            filtered_dict = {}
+            for key, value in self.__objects.items():
+                if type(value) is cls:
+                    filtered_dict[key] = value
+            return filtered_dict
 
     def new(self, obj):
-        """sets __object to given obj
-        Args:
-            obj: given object
-        """
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            self.__objects[key] = obj
+        """Adds new object to storage dictionary"""
+        self.__objects.update(
+            {obj.to_dict()['__class__'] + '.' + obj.id: obj}
+        )
+
 
     def save(self):
-        """serialize the file path to JSON file path
-        """
-        my_dict = {}
-        for key, value in self.__objects.items():
-            my_dict[key] = value.to_dict()
-        with open(self.__file_path, 'w', encoding="UTF-8") as f:
-            json.dump(my_dict, f)
+        """Saves storage dictionary to file"""
+        with open(self.__file_path, 'w') as file:
+            temp = {}
+            for key, val in self.__objects.items():
+                temp[key] = val.to_dict()
+            json.dump(temp, file)
+
 
     def reload(self):
-        """serialize the file path to JSON file path
-        """
-        try:
-            with open(self.__file_path, 'r', encoding="UTF-8") as f:
-                for key, value in (json.load(f)).items():
-                    value = eval(value["__class__"])(**value)
-                    self.__objects[key] = value
-        except FileNotFoundError:
-            pass
+        """Loads storage dictionary from file"""
+        classes = self.model_classes
+        if os.path.isfile(self.__file_path):
+            temp = {}
+            with open(self.__file_path, 'r') as file:
+                temp = json.load(file)
+                for key, val in temp.items():
+                    self.all()[key] = classes[val['__class__']](**val)
+
 
     def delete(self, obj=None):
+<<<<<<< HEAD
         """ delete an existing element
         """
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
             del self.__objects(key, None)
+=======
+         """Removes an object from the storage dictionary"""
+        if obj is not None:
+            obj_key = obj.to_dict()['__class__'] + '.' + obj.id
+            if obj_key in self.__objects.keys():
+                del self.__objects[obj_key]
+>>>>>>> 9f414d4fa133d9532364b6a3f493b68cc5d6c2f9
 
     def close(self):
-        """ calls reload()
+        """ calls reload() and closes the storage engine
         """
         self.reload()
