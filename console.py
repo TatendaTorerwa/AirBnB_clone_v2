@@ -117,7 +117,6 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-<<<<<<< HEAD
     def do_create(self, arg):
         """ Create an object of any class"""
 
@@ -164,7 +163,7 @@ class HBNBCommand(cmd.Cmd):
         print(new_instance.id)
     else:
         print("** class doesn't exist **")
-=======
+
 	def do_create(self, arg):
         """ Create an object of any class"""
 
