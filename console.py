@@ -1,7 +1,11 @@
 #!/usr/bin/python3
-""" Console Module """
+"""console Module """
 import cmd
 import sys
+import re
+import os
+import uuid
+
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -113,27 +117,52 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, arg):
         """ Create an object of any class"""
-        try:
-            if not args:
-                raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1]
-                    .replace("_", " ").replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
-            print("** class name missing **")
-        except NameError:
-            print("** class doesn't exist **")
-        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
+
+    args = shlex.split(arg)  # Use shlex to split the string preserving quotes
+
+    if len(args) == 0:
+        print("** class name missing **")
+        return
+
+    new_args = []
+    for val in args:
+        idx = val.find('=')
+        val = val[:idx] + val[idx:].replace('_', ' ')
+        new_args.append(val)
+
+    if new_args[0] in HBNBCommand.classes:
+        new_instance = HBNBCommand.classes[new_args[0]]()
+        new_dict = {}
+        for val in new_args:
+            if val != new_args[0]:
+                new_list = val.split('=')
+                new_dict[new_list[0]] = new_list[1]
+
+        for key, value in new_dict.items():
+            if value[0] == '"':
+                val_list = shlex.split(value)
+                new_dict[key] = val_list[0]
+                setattr(new_instance, key, new_dict[key])
+            else:
+                try:
+                    if type(eval(value)).__name__ == 'int':
+                        value = eval(value)
+                except Exception:
+                    continue
+                try:
+                    if type(eval(value)).__name__ == 'float':
+                        value = eval(value)
+                except Exception:
+                    continue
+
+                setattr(new_instance, key, value)
+
         new_instance.save()
         print(new_instance.id)
+    else:
+        print("** class doesn't exist **")
 
     def help_create(self):
         """ Help information for the create method """
