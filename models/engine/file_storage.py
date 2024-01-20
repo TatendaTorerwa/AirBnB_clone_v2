@@ -72,7 +72,7 @@ class FileStorage:
         """
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
-            del self.__objects[key]
+            del self.__objects(key, None)
 
     def close(self):
         """ calls reload()
