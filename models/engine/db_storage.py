@@ -1,4 +1,4 @@
-#!?usr/bin/python3
+#!/usr/bin/python3
 """ This module defines a class to manage database storage for hbnb clone"""
 import os
 from sqlalchemy import create_engine
@@ -12,6 +12,7 @@ from models.city import City
 from models.place import Place, place_amenity
 from models.amenity import Amenity
 from models.review import Review
+
 
 class DBStorage:
     """This class manages storage of hbnb models in a SQL database"""
@@ -88,3 +89,4 @@ class DBStorage:
     def close(self):
         """Closes the storage engine."""
         self.__session.close()
+        self.__session.remove()
