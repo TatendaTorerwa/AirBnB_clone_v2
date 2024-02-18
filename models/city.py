@@ -1,11 +1,12 @@
-#!/usr/bin/python3
-""" City Module for HBNB project """
+#!/usr/bin/python
+""" holds class City"""
 import os
+import models
+import sqlalchemy
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
-
 from models.base_model import BaseModel, Base
-
+from sqlalchemy.ext.declarative import declarative_base
 
 class City(BaseModel):
     """ The city class, contains state ID and name """
@@ -21,3 +22,4 @@ class City(BaseModel):
         cascade='all, delete, delete-orphan',
         backref='cities'
     ) if os.getenv('HBNB_TYPE_STORAGE') == 'db' else None
+
