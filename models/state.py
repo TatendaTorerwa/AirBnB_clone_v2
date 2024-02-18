@@ -8,6 +8,7 @@ from models.base_model import BaseModel, Base
 from os import getenv
 from models.city import City
 
+
 class State(BaseModel, Base):
     """Represents a state for a MySQL database.
 
@@ -37,4 +38,3 @@ class State(BaseModel, Base):
                 if city.state_id == self.id:
                     city_list.append(city)
             return city_list
-
